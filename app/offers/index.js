@@ -121,7 +121,7 @@ export default function OffersScreen() {
                 
                 {companyDetails?.logo && (
                   <Image 
-                    source={{ uri: `http://127.0.0.1:8000${companyDetails.logo}` }}
+                    source={{ uri: `fadishouhfa.pythonanywhere.com${companyDetails.logo}` }}
                     style={styles.detailLogo}
                   />
                 )}

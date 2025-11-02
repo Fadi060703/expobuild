@@ -97,7 +97,7 @@ export default function NewsScreen() {
               
               {articleDetails?.image && (
                 <Image 
-                  source={{ uri: `http://127.0.0.1:8000${articleDetails.image}` }}
+                  source={{ uri: `fadishouhfa.pythonanywhere.com${articleDetails.image}` }}
                   style={styles.articleImage}
                   resizeMode="contain"
                 />
