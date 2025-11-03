@@ -34,9 +34,11 @@ export default function HomeScreen() {
   const autoSlideIntervalMs = 3500; // auto-slide every 3.5s
 
   const [carouselImages] = useState([
-    require('../assets/images/c1.jpg'),
-    require('../assets/images/c1.jpg'),
-    require('../assets/images/c1.jpg'),
+    require('../assets/images/1.jpg'),
+    require('../assets/images/2.jpg'),
+    require('../assets/images/3.jpg'),
+    require('../assets/images/4.jpg'),
+    require('../assets/images/5.jpg'),
   ]);
 
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -46,10 +48,10 @@ export default function HomeScreen() {
 
   // Buttons data
   const buttonData = [
-    { image: require('../assets/images/people.png'), text: 'Participants', screenName: 'participants/index' },
-    { image: require('../assets/images/news.png'), text: 'News', screenName: 'news/index' },
-    { image: require('../assets/images/sale.png'), text: 'Offers', screenName: 'offers/index' },
-    { image: require('../assets/images/map.png'), text: 'Maps', screenName: 'maps/index' },
+    { image: require('../assets/images/people.png'), text: 'المشاركون', screenName: 'participants/index' },
+    { image: require('../assets/images/news.png'), text: 'الأخبار', screenName: 'news/index' },
+    { image: require('../assets/images/sale.png'), text: 'العروض', screenName: 'offers/index' },
+    { image: require('../assets/images/map.png'), text: 'خرائط', screenName: 'maps/index' },
   ];
 
   // Auto-looping carousel logic
@@ -121,7 +123,7 @@ export default function HomeScreen() {
           }}
         >
           <Text style={{
-            color: '#fff',
+            color: '#ffffffff',
             fontSize: moderateScale(26, width),
             fontWeight: '700',
           }}>

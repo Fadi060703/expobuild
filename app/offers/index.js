@@ -1,26 +1,29 @@
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
   Modal,
-  PixelRatio,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import { fetchOfferDetails, fetchOffers } from '../../src/services/offersService';
 import { fetchParticipantDetails } from '../../src/services/participantsService';
 
-const { width, height } = Dimensions.get('window');
+// 🔹 Scaling helpers
+const guidelineBaseWidth = 375;
+const guidelineBaseHeight = 812;
 
-// 🔹 Helper function to scale sizes proportionally
-const scale = size => (width / 375) * size;
-const fontScale = size => PixelRatio.roundToNearestPixel((width / 375) * size);
+const scale = (size, width) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size, height) => (height / guidelineBaseHeight) * size;
+const moderateScale = (size, width, factor = 0.5) =>
+  size + (scale(size, width) - size) * factor;
 
 export default function OffersScreen() {
+  const { width, height } = useWindowDimensions();
+
   const [offers, setOffers] = useState([]);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +66,7 @@ export default function OffersScreen() {
       setDetailLoading(true);
       const offer = await fetchOfferDetails(id);
       setSelectedOffer(offer);
-      
+
       if (offer?.company) {
         const company = await fetchParticipantDetails(offer.company);
         setCompanyDetails(company);
@@ -77,66 +80,165 @@ export default function OffersScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#068d8c" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Expo Offers</Text>
-      
-      <ScrollView style={styles.listContainer}>
+    <View style={{ flex: 1, backgroundColor: '#f8fbff' }}>
+      <Text
+        style={{
+          fontSize: moderateScale(22, width),
+          fontWeight: 'bold',
+          color: '#FBBC05',
+          textAlign: 'center',
+          marginTop: verticalScale(50, height),
+          marginBottom: verticalScale(20, height),
+        }}
+      >
+        Expo Offers
+      </Text>
+
+      <ScrollView style={{ paddingHorizontal: scale(15, width) }}>
         {offers.map((offer) => (
           <TouchableOpacity
             key={offer.id}
-            style={styles.listItem}
+            style={{
+              backgroundColor: 'white',
+              padding: scale(15, width),
+              borderRadius: moderateScale(10, width),
+              marginBottom: verticalScale(12, height),
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
             onPress={() => loadOfferDetails(offer.id)}
           >
-            <Text style={styles.offerName}>{offer.name}</Text>
-            <Text style={styles.companyName}>{offer.companyName}</Text>
+            <Text
+              style={{
+                fontSize: moderateScale(16, width),
+                fontWeight: 'bold',
+                color: '#333',
+                marginBottom: verticalScale(4, height),
+              }}
+            >
+              {offer.name}
+            </Text>
+            <Text style={{ fontSize: moderateScale(14, width), color: '#666' }}>
+              {offer.companyName}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
+      {/* Offer Details Modal */}
       <Modal
         visible={!!selectedOffer}
-        transparent={true}
+        transparent
         animationType="slide"
         onRequestClose={() => setSelectedOffer(null)}
       >
-        <View style={styles.detailModalContainer}>
-          <View style={styles.detailModal}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+        >
+          <View
+            style={{
+              width: width * 0.9,
+              backgroundColor: 'white',
+              borderRadius: moderateScale(10, width),
+              padding: scale(20, width),
+              maxHeight: '80%',
+            }}
+          >
             {detailLoading ? (
               <ActivityIndicator size="large" color="#068d8c" />
             ) : (
               <>
-                <TouchableOpacity 
-                  style={styles.closeButton}
+                {/* Close Button */}
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    top: verticalScale(10, height),
+                    right: scale(10, width),
+                    zIndex: 1,
+                    padding: scale(10, width),
+                  }}
                   onPress={() => setSelectedOffer(null)}
                 >
-                  <Text style={styles.closeButtonText}>×</Text>
+                  <Text style={{ fontSize: moderateScale(24, width), color: '#068d8c' }}>×</Text>
                 </TouchableOpacity>
-                
+
+                {/* Company Logo */}
                 {companyDetails?.logo && (
-                  <Image 
-                    source={{ uri: `fadishouhfa.pythonanywhere.com${companyDetails.logo}` }}
-                    style={styles.detailLogo}
+                  <Image
+                    source={{ uri: `http://fadishouhfa.pythonanywhere.com${companyDetails.logo}` }}
+                    style={{
+                      width: scale(80, width),
+                      height: scale(80, width),
+                      alignSelf: 'center',
+                      borderRadius: scale(40, width),
+                      marginBottom: verticalScale(15, height),
+                    }}
                   />
                 )}
-                
-                <Text style={styles.detailName}>{selectedOffer?.name}</Text>
+
+                <Text
+                  style={{
+                    fontSize: moderateScale(20, width),
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    marginBottom: verticalScale(5, height),
+                    color: '#333',
+                  }}
+                >
+                  {selectedOffer?.name}
+                </Text>
+
                 {companyDetails && (
-                  <Text style={styles.detailCompany}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, width),
+                      textAlign: 'center',
+                      color: '#068d8c',
+                      marginBottom: verticalScale(20, height),
+                    }}
+                  >
                     By: {companyDetails.name}
                   </Text>
                 )}
-                
-                <View style={styles.detailSection}>
-                  <Text style={styles.detailLabel}>Offer Details:</Text>
-                  <Text style={styles.detailText}>{selectedOffer?.description}</Text>
-                </View>
+
+                <ScrollView showsVerticalScrollIndicator={true}>
+                  <View style={{ marginBottom: verticalScale(15, height) }}>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        color: '#068d8c',
+                        marginBottom: verticalScale(5, height),
+                        fontSize: moderateScale(15, width),
+                      }}
+                    >
+                      Offer Details:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(14, width),
+                        color: '#555',
+                        lineHeight: verticalScale(22, height),
+                      }}
+                    >
+                      {selectedOffer?.description}
+                    </Text>
+                  </View>
+                </ScrollView>
               </>
             )}
           </View>
@@ -145,105 +247,3 @@ export default function OffersScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fbff',
-  },
-  header: {
-    fontSize: fontScale(22),
-    fontWeight: 'bold',
-    color: '#FBBC05',
-    textAlign: 'center',
-    marginTop: scale(50),
-    marginBottom: scale(20),
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContainer: {
-    paddingHorizontal: scale(15),
-  },
-  listItem: {
-    backgroundColor: 'white',
-    padding: scale(15),
-    borderRadius: scale(10),
-    marginBottom: scale(12),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  offerName: {
-    fontSize: fontScale(16),
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: scale(4),
-  },
-  companyName: {
-    fontSize: fontScale(14),
-    color: '#666',
-  },
-  detailModalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  detailModal: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: scale(10),
-    padding: scale(20),
-    maxHeight: '80%',
-  },
-  detailLogo: {
-    width: scale(80),
-    height: scale(80),
-    alignSelf: 'center',
-    borderRadius: scale(40),
-    marginBottom: scale(15),
-  },
-  detailName: {
-    fontSize: fontScale(20),
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: scale(5),
-    color: '#333',
-  },
-  detailCompany: {
-    fontSize: fontScale(15),
-    textAlign: 'center',
-    color: '#068d8c',
-    marginBottom: scale(20),
-  },
-  detailSection: {
-    marginBottom: scale(15),
-  },
-  detailLabel: {
-    fontWeight: 'bold',
-    color: '#068d8c',
-    marginBottom: scale(5),
-    fontSize: fontScale(15),
-  },
-  detailText: {
-    fontSize: fontScale(14),
-    color: '#555',
-    lineHeight: fontScale(22),
-  },
-  closeButton: {
-    position: 'absolute',
-    top: scale(10),
-    right: scale(10),
-    padding: scale(10),
-    zIndex: 1,
-  },
-  closeButtonText: {
-    fontSize: fontScale(24),
-    color: '#068d8c',
-  },
-});

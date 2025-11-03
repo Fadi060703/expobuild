@@ -13,7 +13,7 @@ export default function TabLayout() {
       <Tabs.Screen 
         name="index"
         options={{
-          title: 'Home',
+          title: 'الرئيسية',
           tabBarIcon: ({ color }) => <MaterialIcons name="home" size={24} color={color} />,
           tabBarActiveTintColor: '#5c2c8c', // Pink
         }}
@@ -21,7 +21,7 @@ export default function TabLayout() {
       <Tabs.Screen 
         name="participants/index"
         options={{
-          title: 'Participants',
+          title: 'المشاركون',
           tabBarIcon: ({ color }) => <MaterialIcons name="people" size={24} color={color} />,
           tabBarActiveTintColor: '#068d8c', // Blue
         }}
@@ -29,7 +29,7 @@ export default function TabLayout() {
       <Tabs.Screen 
         name="news/index"
         options={{
-          title: 'News',
+          title: 'الأخبار',
           tabBarIcon: ({ color }) => <MaterialIcons name="newspaper" size={24} color={color} />,
           tabBarActiveTintColor: '#e40574', // Green
         }}
@@ -37,19 +37,20 @@ export default function TabLayout() {
       <Tabs.Screen 
         name="offers/index"
         options={{
-          title: 'Offers',
+          title: 'العروض',
           tabBarIcon: ({ color }) => <MaterialIcons name="local-offer" size={24} color={color} />,
           tabBarActiveTintColor: '#FBBC05', // Yellow
         }}
       />
-{/*       <Tabs.Screen 
+      <Tabs.Screen 
         name="maps/index"
         options={{
           title: 'Map',
           tabBarIcon: ({ color }) => <MaterialIcons name="map" size={24} color={color} />,
           tabBarActiveTintColor: '#EA4335', // Red
+          href : null 
         }}
-      /> */}
+      />
     </Tabs>
   );
 }

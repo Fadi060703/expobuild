@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
-  PixelRatio,
+  Modal,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  useWindowDimensions,
 } from 'react-native';
 import { fetchArticleDetails, fetchNewsArticles } from '../../src/services/newsService';
 
-const { width, height } = Dimensions.get('window');
-const scale = size => (width / 375) * size;
-const fontScale = size => PixelRatio.roundToNearestPixel((width / 375) * size);
+// 🔹 Scaling helpers
+const guidelineBaseWidth = 375;
+const guidelineBaseHeight = 812;
+
+const scale = (size, width) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size, height) => (height / guidelineBaseHeight) * size;
+const moderateScale = (size, width, factor = 0.5) =>
+  size + (scale(size, width) - size) * factor;
 
 export default function NewsScreen() {
+  const { width, height } = useWindowDimensions();
+
   const [newsArticles, setNewsArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -53,149 +59,159 @@ export default function NewsScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#e50076" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Expo News</Text>
-      
-      <ScrollView style={styles.articlesContainer}>
-        {newsArticles.map(article => (
-          <TouchableOpacity 
-            key={article.id} 
-            style={styles.articleCard}
+    <View style={{ flex: 1, backgroundColor: '#fff', paddingTop: verticalScale(30, height) }}>
+      <Text
+        style={{
+          fontSize: moderateScale(24, width),
+          fontWeight: 'bold',
+          color: '#ff914d',
+          textAlign: 'center',
+          marginBottom: verticalScale(20, height),
+        }}
+      >
+        Expo News
+      </Text>
+
+      <ScrollView style={{ paddingHorizontal: scale(15, width) }}>
+        {newsArticles.map((article) => (
+          <TouchableOpacity
+            key={article.id}
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: moderateScale(10, width),
+              marginBottom: verticalScale(15, height),
+              padding: scale(15, width),
+              shadowColor: '#ff914d',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 6,
+              elevation: 5,
+              borderWidth: 1,
+              borderColor: '#ffe6f2',
+            }}
             onPress={() => handleArticlePress(article)}
           >
-            <View style={styles.articleTextContainer}>
-              <Text style={styles.articleTitle}>{article.headline}</Text>
-              <Text style={styles.articleDate}>{article.created_at}</Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: moderateScale(18, width),
+                  fontWeight: 'bold',
+                  color: '#333',
+                  marginBottom: verticalScale(5, height),
+                }}
+              >
+                {article.headline}
+              </Text>
+              <Text
+                style={{
+                  fontSize: moderateScale(12, width),
+                  color: '#888',
+                }}
+              >
+                {article.created_at}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
       {/* Article Detail Modal */}
-      {selectedArticle && (
-        <View style={styles.detailModal}>
-          <TouchableOpacity 
-            style={styles.closeButton}
-            onPress={() => setSelectedArticle(null)}
+      <Modal
+        visible={!!selectedArticle}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setSelectedArticle(null)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              width: width * 0.9,
+              maxHeight: '80%',
+              backgroundColor: 'white',
+              borderRadius: moderateScale(10, width),
+              padding: scale(20, width),
+            }}
           >
-            <Text style={styles.closeButtonText}>×</Text>
-          </TouchableOpacity>
+            {/* Close Button */}
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: verticalScale(10, height),
+                right: scale(10, width),
+                zIndex: 1,
+                padding: scale(10, width),
+              }}
+              onPress={() => setSelectedArticle(null)}
+            >
+              <Text style={{ fontSize: moderateScale(28, width), color: '#e50076' }}>×</Text>
+            </TouchableOpacity>
 
-          {detailLoading ? (
-            <ActivityIndicator size="large" color="#e50076" />
-          ) : (
-            <>
-              <Text style={styles.detailTitle}>{selectedArticle.headline}</Text>
-              <Text style={styles.detailDate}>{selectedArticle.created_at}</Text>
-              
-              {articleDetails?.image && (
-                <Image 
-                  source={{ uri: `fadishouhfa.pythonanywhere.com${articleDetails.image}` }}
-                  style={styles.articleImage}
-                  resizeMode="contain"
-                />
-              )}
-              
-              <Text style={styles.detailContent}>
-                {articleDetails?.articleText || 'Loading content...'}
-              </Text>
-            </>
-          )}
+            {detailLoading ? (
+              <ActivityIndicator size="large" color="#e50076" />
+            ) : (
+              <ScrollView showsVerticalScrollIndicator={true}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(22, width),
+                    fontWeight: 'bold',
+                    marginBottom: verticalScale(8, height),
+                    color: '#333',
+                  }}
+                >
+                  {selectedArticle?.headline}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: moderateScale(13, width),
+                    color: '#888',
+                    marginBottom: verticalScale(15, height),
+                  }}
+                >
+                  {selectedArticle?.created_at}
+                </Text>
+
+                {articleDetails?.image && (
+                  <Image
+                    source={{ uri: `http://fadishouhfa.pythonanywhere.com${articleDetails.image}` }}
+                    style={{
+                      width: '100%',
+                      height: verticalScale(200, height),
+                      marginBottom: verticalScale(20, height),
+                      borderRadius: moderateScale(8, width),
+                    }}
+                    resizeMode="contain"
+                  />
+                )}
+
+                <Text
+                  style={{
+                    fontSize: moderateScale(16, width),
+                    lineHeight: verticalScale(24, height),
+                    color: '#444',
+                  }}
+                >
+                  {articleDetails?.articleText || 'Loading content...'}
+                </Text>
+              </ScrollView>
+            )}
+          </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: scale(30),
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    fontSize: fontScale(24),
-    fontWeight: 'bold',
-    color: '#ff914d',
-    textAlign: 'center',
-    marginBottom: scale(20),
-  },
-  articlesContainer: {
-    paddingHorizontal: scale(15),
-  },
-  articleCard: {
-    backgroundColor: '#fff',
-    borderRadius: scale(10),
-    marginBottom: scale(15),
-    padding: scale(15),
-    shadowColor: '#ff914d',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#ffe6f2',
-  },
-  articleTitle: {
-    fontSize: fontScale(18),
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: scale(5),
-  },
-  articleDate: {
-    fontSize: fontScale(12),
-    color: '#888',
-  },
-  detailModal: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#fff',
-    padding: scale(20),
-    zIndex: 100,
-  },
-  closeButton: {
-    alignSelf: 'flex-end',
-    padding: scale(10),
-  },
-  closeButtonText: {
-    fontSize: fontScale(28),
-    color: '#e50076',
-  },
-  detailTitle: {
-    fontSize: fontScale(22),
-    fontWeight: 'bold',
-    marginBottom: scale(8),
-    color: '#333',
-  },
-  detailDate: {
-    fontSize: fontScale(13),
-    color: '#888',
-    marginBottom: scale(15),
-  },
-  detailContent: {
-    fontSize: fontScale(16),
-    lineHeight: fontScale(24),
-    color: '#444',
-  },
-  articleImage: {
-    width: '100%',
-    height: scale(200),
-    marginBottom: scale(20),
-    borderRadius: scale(8),
-  },
-});
