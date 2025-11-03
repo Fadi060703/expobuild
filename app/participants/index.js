@@ -24,7 +24,7 @@ const verticalScale = (size, height) => (height / guidelineBaseHeight) * size;
 const moderateScale = (size, width, factor = 0.5) =>
   size + (scale(size, width) - size) * factor;
 
-const API_BASE_URL = 'http://fadishouhfa.pythonanywhere.com';
+const API_BASE_URL = 'https://fadishouhfa.pythonanywhere.com';
 
 /* -----------------------------
    ParticipantsScreen

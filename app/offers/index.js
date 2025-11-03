@@ -180,7 +180,7 @@ export default function OffersScreen() {
                 {/* Company Logo */}
                 {companyDetails?.logo && (
                   <Image
-                    source={{ uri: `http://fadishouhfa.pythonanywhere.com${companyDetails.logo}` }}
+                    source={{ uri: `https://fadishouhfa.pythonanywhere.com${companyDetails.logo}` }}
                     style={{
                       width: scale(80, width),
                       height: scale(80, width),

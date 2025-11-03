@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://fadishouhfa.pythonanywhere.com/api';
+const API_BASE_URL = 'https://fadishouhfa.pythonanywhere.com/api';
 // Participants API
 export const fetchParticipants = async () => {
   try {

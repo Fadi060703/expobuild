@@ -187,7 +187,7 @@ export default function NewsScreen() {
 
                 {articleDetails?.image && (
                   <Image
-                    source={{ uri: `http://fadishouhfa.pythonanywhere.com${articleDetails.image}` }}
+                    source={{ uri: `https://fadishouhfa.pythonanywhere.com${articleDetails.image}` }}
                     style={{
                       width: '100%',
                       height: verticalScale(200, height),

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://fadishouhfa.pythonanywhere.com/api';
+const API_BASE_URL = 'https://fadishouhfa.pythonanywhere.com/api';
 export const fetchOffers = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/offers`);
